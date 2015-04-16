@@ -1,0 +1,226 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Java Script API Client code snippet demo</title>
+    <style>
+        body {
+            margin: 10px;
+            font-family: 'Lato', sans-serif;
+            text-align: left;
+            color: #999;
+        }
+    </style>
+
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script language="JavaScript" src="functions.js"></script>
+    <script language="JavaScript" src="autodata_api.js"></script>
+</head>
+
+<body>
+<div>
+    Java Script API Client code snippet demo<br/>
+    <br/>
+    <table>
+        <tr>
+            <td>
+                <button id="manufacturers">
+                    jQuery
+                </button>
+                <button onclick="document.getElementById('result').innerHTML = getManufacturers();">
+                    Get Manufacturers
+                </button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="manufacturer">
+                    jQuery
+                </button>
+                <button onclick="document.getElementById('result').innerHTML = getManufacturer();">
+                    Get Models
+                </button>
+            </td>
+            <td>
+                Manufacturer
+            </td>
+            <td>
+                <input type="text" id="manufacturer_1" value="AUD0" size="4"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="document.getElementById('result').innerHTML = getVehicles();">
+                    Get Vehicle
+                </button>
+            </td>
+            <td>
+                Manufacturer
+            </td>
+            <td>
+                <input type="text" id="manufacturer_2" value="AUD0" size="4"/>
+            </td>
+            <td>
+                Model id
+            </td>
+            <td>
+                <input type="text" id="model_id" value="7000086" size="7"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="document.getElementById('result').innerHTML = getVehicle();">
+                    Get Vehicle
+                </button>
+            </td>
+            <td>
+                MID
+            </td>
+            <td>
+                <input type="text" id="mid_1" value="AUD22466" size="8"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="document.getElementById('result').innerHTML = getRepair();">
+                    Get Repair Times
+                </button>
+            </td>
+            <td>
+                MID
+            </td>
+            <td>
+                <input type="text" id="mid_2" value="AUD22466" size="8"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="document.getElementById('result').innerHTML = getRepairTimes();">
+                    Get Repair Times
+                </button>
+            </td>
+            <td>
+                MID
+            </td>
+            <td>
+                <input type="text" id="mid_3" value="AUD22466" size="8"/>
+            </td>
+            <td>
+                Repair times id
+            </td>
+            <td>
+                <input type="text" id="repair_times_id" value="42533" size="5"/>
+            </td>
+            <td>
+                Include parts
+            </td>
+            <td>
+                <input type="text" id="parts" value="false" size="5"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="document.getElementById('result').innerHTML = getService();">
+                    Get Service Schedule
+                </button>
+            </td>
+            <td>
+                MID
+            </td>
+            <td>
+                <input type="text" id="mid_4" value="AUD22466" size="8"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="document.getElementById('result').innerHTML = getServiceSchedule();">
+                    Get Service Schedule
+                </button>
+            </td>
+            <td>
+                MID
+            </td>
+            <td>
+                <input type="text" id="mid_5" value="AUD22466" size="8"/>
+            </td>
+            <td>
+                Variant id
+            </td>
+            <td>
+                <input type="text" id="variant_id" value="AUDSG0000402" size="12"/>
+            </td>
+            <td>
+                Include parts
+            </td>
+            <td>
+                <input type="text" id="parts_2" value="false" size="5"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="document.getElementById('result').innerHTML = getServiceIntervals();">
+                    Get Service Operations
+                </button>
+            </td>
+            <td>
+                MID
+            </td>
+            <td>
+                <input type="text" id="mid_6" value="AUD22466" size="8"/>
+            </td>
+            <td>
+                Variant id
+            </td>
+            <td>
+                <input type="text" id="variant_id_2" value="AUDSG0000402" size="12"/>
+            </td>
+            <td>
+                Interval id
+            </td>
+            <td>
+                <input type="text" id="interval_id" value="1" size="2"/>
+            </td>
+        </tr>
+    </table>
+
+    <pre id="result"></pre>
+
+</div>
+
+<script>
+    $( "#manufacturers" ).click(function() {
+        var api = new Api();
+        var html ='';
+        var response = api.getManufacturers();
+        manufacturers = response['data'];
+
+        for (var manufacturer in manufacturers) {
+            if (manufacturers.hasOwnProperty(manufacturer)) {
+                var m = manufacturers[manufacturer];
+            }
+            html = html + 'manufacturer_id: ' + m.manufacturer_id + ', manufacturer: ' + m.manufacturer + "\n";
+        }
+
+        $('#result').text(html);
+    });
+
+    $( "#manufacturer" ).click(function() {
+        var manufacturer = $("#manufacturer_1").val();
+        var api = new Api();
+        var html ='';
+        var response = api.getManufacturer(manufacturer);
+        models = response['data']['models'];
+
+        for (var model in models) {
+            if (models.hasOwnProperty(model)) {
+                var m = models[model];
+            }
+            html = html + 'model_id: ' + m.model_id + ', model: ' + m.model + ', subbody:' + m.subbody + "\n";
+        }
+
+        $('#result').text(html);
+    });
+</script>
+
+</body>
+</html>
