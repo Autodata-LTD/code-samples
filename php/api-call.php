@@ -102,3 +102,19 @@ if ($response !== false) {
     echo explode("\n", $response->getResponseHeader())[0];
     echo '<hr />';
 }
+
+/**
+ * Example 6
+ *
+ * Retrieve specific Service Operations.
+ * Example operation data are taken from Example 3 - Retrieve a specific Service Schedule
+ */
+$exampleOperation = $operations->data->service_intervals[0];
+$api->setEndpoint('vehicles/AUD00528/service-schedules/' . $exampleOperation->service_schedule_id . '/intervals/' . $exampleOperation->service_interval_id);
+$response = $api->requestGet(array('language' => 'en-gb', 'country-code' => 'gb'));
+if ($response !== false) {
+    $operationsData = $response->getResponseBody();
+    echo 'Example 6, service operations response: <br/>';
+    echo '<pre>' . print_r($operationsData, 1) . '</pre>';
+    echo '<hr />';
+}
