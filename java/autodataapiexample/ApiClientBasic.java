@@ -6,6 +6,7 @@ Autodata API. Only to be use under an NDA or valid contract with Autodata.
 Autodata are not liable for this code being re-used or modified.
 */
 package autodataapiexample;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
