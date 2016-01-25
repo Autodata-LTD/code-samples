@@ -71,7 +71,6 @@ public class ApiClientOauth implements ApiClient {
      * Gets current country code
      * @return 2 letters based country code
      */
-    @Override
     public String getCountryCode() {
         return countryCode;
     }
@@ -80,7 +79,6 @@ public class ApiClientOauth implements ApiClient {
      * Sets current country code
      * @param countryCode
      */
-    @Override
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
@@ -89,7 +87,6 @@ public class ApiClientOauth implements ApiClient {
      * Gets current language code
      * @return 4 letters based language code
      */
-    @Override
     public String getLanguageCode() {
         return languageCode;
     }
@@ -98,7 +95,6 @@ public class ApiClientOauth implements ApiClient {
      * Sets current language code
      * @param languageCode
      */
-    @Override
     public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
@@ -107,7 +103,6 @@ public class ApiClientOauth implements ApiClient {
      * Holds API response from last executed query
      * @return last API response
      */
-    @Override
     public String getLastResponse() {
         return lastResponse;
     }
@@ -116,7 +111,7 @@ public class ApiClientOauth implements ApiClient {
      * Returns secret token generated for the user
      */
     private void getToken() {
-        Map<String, String> params = new LinkedHashMap<>();
+        Map<String, String> params = new LinkedHashMap<String, String>();
         params.put("client_id", this.clientId);
         params.put("client_secret", this.clientSecret);
         params.put("grant_type", "client_credentials");
@@ -146,7 +141,6 @@ public class ApiClientOauth implements ApiClient {
      * @param methodType type of query - "GET", "POST", "PUT", "DELETE"
      * @return json string that contains API response data
      */
-    @Override
     public String call(Map<String, String> endpoint, String methodType) {
         return this.call(endpoint, new LinkedHashMap<String, String>(), methodType);
     }
@@ -158,7 +152,6 @@ public class ApiClientOauth implements ApiClient {
      * @param methodType type of query - "GET", "POST", "PUT"
      * @return
      */
-    @Override
     public String call(Map<String, String> endpoint, Map<String, String> params, String methodType) {
 
         int currentTime = (int) (new Date().getTime() / 1000);
@@ -261,8 +254,12 @@ public class ApiClientOauth implements ApiClient {
      * Converts InputStream to string
      */
     private String convertStreamToString(InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is, "UTF-8").useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
+    	String value;
+        java.util.Scanner s = new java.util.Scanner(is, "UTF-8");
+        s.useDelimiter("\\A");
+        value=s.hasNext() ? s.next() : "";
+        s.close();
+        return value;
     }
 
 }
