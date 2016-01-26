@@ -164,7 +164,7 @@ public class ApiClientOauth implements ApiClient {
         requiredParams += "&access_token=" + this.accessToken;
 
         try {
-            URL url = new URL(this.baseUrl + this.mapToEndpoint(endpoint) + "?" + requiredParams + this.mapToParams(params));
+            URL url = new URL(this.baseUrl + this.mapToEndpoint(endpoint) + "?" + requiredParams + "&" + this.mapToParams(params));
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(methodType);
