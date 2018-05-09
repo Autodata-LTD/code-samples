@@ -1,27 +1,28 @@
-/*************************************************************
-Copyright (C) Autodata Limited 1974-2015.
-All Rights Reserved.
-NOTICE: Code example provide to developers wishing to integrate with the
-Autodata API. Only to be use under an NDA or valid contract with Autodata.
-Autodata are not liable for this code being re-used or modified.
-*/
-var valid=0; var token='';
+/**
+ * Copyright (C) Autodata Limited 1974-2018.
+ * All Rights Reserved.
+ * NOTICE: Code example provide to developers wishing to integrate with the
+ * Autodata API. Only to be use under an NDA or valid contract with Autodata.
+ * Autodata are not liable for this code being re-used or modified.
+ */
+
+var valid = 0;
 
 /**
  * Simple class providing access to Autodata API
  */
 function Api() {
-    this.baseUrl = 'http://api.autodata-group.com/';
-    this.version = 'v1';
-    this.tokenUrl = 'https://account.autodata-group.com/oauth/access_token';
-    this.grant_type = 'client_credentials';
-    this.client_id = '';
+    this.baseUrl       = 'https://api.autodata-group.com';
+    this.version       = 'v1';
+    this.tokenUrl      = 'https://account.autodata-group.com/oauth/access_token';
+    this.grant_type    = 'client_credentials';
+    this.client_id     = '';
     this.client_secret = '';
-    this.scope = 'scope1';
-    this.state = '123456789';
-    this.countryCode = 'gb';
-    this.language = 'en-gb';
-    this.format = 'application/json';
+    this.scope         = 'scope1';
+    this.state         = '123456789';
+    this.countryCode   = 'gb';
+    this.language      = 'en-gb';
+    this.format        = 'application/json';
 
     this.response = {
         success: false,
@@ -51,15 +52,15 @@ function Api() {
         this.apiKey = apiKey;
     };
 
-    this.getToken = function(){
-        if(Date.now() > valid ){
-            var request = new XMLHttpRequest();
-            var params = Array();
-            params['grant_type'] = this.grant_type;
-            params['client_id'] = this.client_id;
+    this.getToken = function () {
+        if (Date.now() > valid) {
+            var request             = new XMLHttpRequest();
+            var params              = Array();
+            params['grant_type']    = this.grant_type;
+            params['client_id']     = this.client_id;
             params['client_secret'] = this.client_secret;
-            params['scope'] = this.scope;
-            params['state'] = this.state;
+            params['scope']         = this.scope;
+            params['state']         = this.state;
 
             var arParameters = Array();
             for (var param in params) {
@@ -69,19 +70,19 @@ function Api() {
             }
 
             var strParameters = '?' + arParameters.join('&');
-            var url = this.tokenUrl + strParameters;
+            var url           = this.tokenUrl + strParameters;
 
-            request.open('GET', url, false);
+            request.open('POST', url, false);
             request.send();
 
-            this.response.status = request.status;
+            this.response.status  = request.status;
             this.response.success = (request.status == 200);
 
             if (this.response.success) {
                 this.response.responseText = request.responseText;
-                var json = this.decodeResponse();
-                token = json['access_token'];
-                valid = (json['expires_in']*1)+Date.now();
+                var json                   = this.decodeResponse();
+                token                      = json['access_token'];
+                valid                      = (json['expires_in'] * 1) + Date.now();
             }
             else {
                 alert('Connection Failed');
@@ -94,15 +95,15 @@ function Api() {
     /**
      * Makes the actual call to the API endpoint
      */
-    this.call = function (url, method, params, language, country) {
-
-        var request = new XMLHttpRequest();
+    this.call = function (url, method, params) {
 
         if (typeof params == 'undefined' || params == null) {
             params = Array();
         }
 
         params['access_token'] = this.getToken();
+        params['country-code'] = this.countryCode;
+        params['language']     = this.language;
 
         var arParameters = Array();
         for (var param in params) {
@@ -110,35 +111,29 @@ function Api() {
                 arParameters.push(param + '=' + params[param]);
             }
         }
+
         var strParameters = '?' + arParameters.join('&');
-        url = url + strParameters;
+        url               = url + strParameters;
 
-        request.open(method, url, false);
+        var apiResponseObject = this.response;
 
-        request.setRequestHeader("Accept", this.format);
+        $.ajax({
+            async: false,
+            dataType: 'text',
+            url: url,
+            method: method,
+        }).done(function (data, textStatus, jqXHR) {
+            apiResponseObject.responseText = data;
+            apiResponseObject.success      = true;
+            apiResponseObject.status       = jqXHR.status;
 
-        // Set the Accept-Language header to the required language for language dependent information
-        if (typeof(language) != 'undefined') {
-            request.setRequestHeader('Accept-Language', language);
-        }
+            return apiResponseObject;
+        }).fail(function (jqXHR, textStatus) {
+            apiResponseObject.statusText = textStatus;
+            apiResponseObject.status     = jqXHR.status;
+        });
 
-        // Set the Country-Code header to the required country to switch to a different region database
-        if (typeof(country) != 'undefined') {
-            request.setRequestHeader('Country-Code', country);
-        }
-
-        request.send();
-
-        this.response.status = request.status;
-        this.response.success = (request.status == 200);
-
-        if (this.response.success) {
-            this.response.responseText = request.responseText;
-        }
-        else {
-            this.response.statusText = request.statusText;
-        }
-        return this.response;
+        return apiResponseObject;
     };
 
     /**
@@ -153,9 +148,7 @@ function Api() {
      * Calls the manufacturer API and returns a list of manufacturers
      */
     this.getManufacturers = function () {
-        var params = Array();
-        params['country-code'] = this.countryCode;
-        var apiData = this.call(this.baseUrl + '/' + this.version + '/manufacturers', 'GET', params);
+        var apiData = this.call(this.baseUrl + '/' + this.version + '/manufacturers', 'GET', null);
 
         if (apiData.success) {
             return this.decodeResponse();
@@ -163,18 +156,13 @@ function Api() {
             console.log(apiData.statusText);
             return false;
         }
-
     };
 
     /**
      * Calls the manufacturer API and returns a list of models for given manufacturer
      */
     this.getManufacturer = function (manufacturer) {
-
-        var params = [];
-        params['country-code'] = this.countryCode;
-
-        var apiData = this.call(this.baseUrl + '/' + this.version + '/manufacturers/' + manufacturer, 'GET', params);
+        var apiData = this.call(this.baseUrl + '/' + this.version + '/manufacturers/' + manufacturer, 'GET', null);
 
         if (apiData.success) {
             return this.decodeResponse();
@@ -188,11 +176,9 @@ function Api() {
      * Calls the vehicle API and returns vehicles details
      */
     this.getVehicles = function (manufacturer, model_id) {
-
-        var params = [];
-        params['country-code'] = this.countryCode;
+        var params                = [];
         params['manufacturer_id'] = manufacturer;
-        params['model_id'] = model_id;
+        params['model_id']        = model_id;
 
         var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles', 'GET', params);
 
@@ -208,11 +194,7 @@ function Api() {
      * Calls the vehicle API and returns vehicle details
      */
     this.getVehicle = function (mid) {
-
-        var params = [];
-        params['country-code'] = this.countryCode;
-
-        var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid, 'GET', params);
+        var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid, 'GET', null);
 
         if (apiData.success) {
             var json = this.decodeResponse();
@@ -227,11 +209,7 @@ function Api() {
      * Calls the vehicle API and returns vehicle details
      */
     this.getRepair = function (mid) {
-
-        var params = [];
-        params['country-code'] = this.countryCode;
-
-        var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid + '/repair-times', 'GET', params);
+        var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid + '/repair-times', 'GET', null);
 
         if (apiData.success) {
             var json = this.decodeResponse();
@@ -246,11 +224,8 @@ function Api() {
      * Calls the vehicle API and returns vehicle details
      */
     this.getRepairTimes = function (mid, repair_times_id, parts) {
-
-        var params = [];
-        params['country-code']  = this.countryCode;
-        params['language']      = this.language;
-        params['parts']         = parts;
+        var params      = [];
+        params['parts'] = parts;
 
         var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid + '/repair-times/' + repair_times_id, 'GET', params);
 
@@ -267,11 +242,7 @@ function Api() {
      * Calls the vehicle API and returns vehicle details
      */
     this.getService = function (mid) {
-
-        var params = [];
-        params['country-code'] = this.countryCode;
-
-        var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid + '/service-schedules', 'GET', params);
+        var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid + '/service-schedules', 'GET', null);
 
         if (apiData.success) {
             var json = this.decodeResponse();
@@ -286,11 +257,8 @@ function Api() {
      * Calls the vehicle API and returns vehicle details
      */
     this.getServiceSchedule = function (mid, variant_id, parts) {
-
-        var params = [];
-        params['country-code']  = this.countryCode;
-        params['language']      = this.language;
-        params['parts']         = parts;
+        var params      = [];
+        params['parts'] = parts;
 
         var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid + '/service-schedules/' + variant_id, 'GET', params);
 
@@ -307,12 +275,7 @@ function Api() {
      * Calls the vehicle API and returns vehicle details
      */
     this.getServiceIntervals = function (mid, variant_id, interval_id) {
-
-        var params = [];
-        params['country-code']  = this.countryCode;
-        params['language']      = this.language;
-
-        var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid + '/service-schedules/' + variant_id + '/intervals/' + interval_id, 'GET', params);
+        var apiData = this.call(this.baseUrl + '/' + this.version + '/vehicles/' + mid + '/service-schedules/' + variant_id + '/intervals/' + interval_id, 'GET', null);
 
         if (apiData.success) {
             var json = this.decodeResponse();
