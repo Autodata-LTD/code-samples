@@ -38,7 +38,7 @@ public class AutodataApiClientExample {
      * Retrieve manufacturers by country:: v1/manufacturers
      */
     private static void manuafacturersExample(ApiClient client) {
-        Map<String, String> endpoint = new LinkedHashMap<>();
+        Map<String, String> endpoint = new LinkedHashMap<String, String>();
         endpoint.put("v1", null);
         endpoint.put("manufacturers", null);
 
@@ -54,7 +54,7 @@ public class AutodataApiClientExample {
      * Search for service schedules by MID:: v1/vehicles/:mid/service-schedules
      */
     private static void serviceSchedulesExample(ApiClient client) {
-        Map<String, String> endpoint = new LinkedHashMap<>();
+        Map<String, String> endpoint = new LinkedHashMap<String, String>();
         endpoint.put("v1", null);
         endpoint.put("vehicles", "AUD00528");
         endpoint.put("service-schedules", null);
@@ -78,7 +78,7 @@ public class AutodataApiClientExample {
             JSONObject serviceSchedule = lastResponse.getJSONArray("data").getJSONObject(0);
             String serviceScheduleId = serviceSchedule.getString("service_schedule_id");
 
-            Map<String, String> endpoint = new LinkedHashMap<>();
+            Map<String, String> endpoint = new LinkedHashMap<String, String>();
             endpoint.put("v1", null);
             endpoint.put("vehicles", "AUD00528");
             endpoint.put("service-schedules", serviceScheduleId);
@@ -93,7 +93,7 @@ public class AutodataApiClientExample {
      * No required data provided example
      */
     private static void errorExample(ApiClient client) {
-        Map<String, String> endpoint = new LinkedHashMap<>();
+        Map<String, String> endpoint = new LinkedHashMap<String, String>();
         endpoint.put("v1", null);
         endpoint.put("vehicles", null);
         endpoint.put("service-schedules", null);
@@ -110,7 +110,7 @@ public class AutodataApiClientExample {
      * Invalid request type example
      */
     private static void errorPostExample(ApiClient client) {
-        Map<String, String> endpoint = new LinkedHashMap<>();
+        Map<String, String> endpoint = new LinkedHashMap<String, String>();
         endpoint.put("v1", null);
         endpoint.put("vehicles", null);
         endpoint.put("service-schedules", null);
@@ -127,7 +127,7 @@ public class AutodataApiClientExample {
      * Get user list:: /accounts/v1/users
      */
     private static void usersListExample(ApiClient client) {
-        Map<String, String> endpoint = new LinkedHashMap<>();
+        Map<String, String> endpoint = new LinkedHashMap<String, String>();
         endpoint.put("accounts", null);
         endpoint.put("v1", null);
         endpoint.put("users", null);
